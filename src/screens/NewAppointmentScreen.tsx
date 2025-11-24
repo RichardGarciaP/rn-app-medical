@@ -150,7 +150,7 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
         ToastAndroid.show('✅ Cita agendada correctamente', ToastAndroid.LONG);
       }
 
-      navigation.navigate('PatientHome', { refresh: true });
+      navigation.navigate('Home', { refresh: true });
     } catch (err: any) {
       const errorMessage =
         err.response?.data?.message ||
