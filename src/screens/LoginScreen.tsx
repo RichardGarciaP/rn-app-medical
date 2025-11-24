@@ -8,10 +8,12 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
 import { Button, Input, ErrorMessage } from '../components';
 
-export const LoginScreen = ({ navigation }: any) => {
+export const LoginScreen = () => {
+  const router = useRouter();
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,6 +31,7 @@ export const LoginScreen = ({ navigation }: any) => {
     setLoading(true);
     try {
       await signIn({ email, password });
+      router.replace('/');
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -76,10 +79,7 @@ export const LoginScreen = ({ navigation }: any) => {
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>¿No tienes cuenta? </Text>
-            <Text
-              style={styles.link}
-              onPress={() => navigation.navigate('Register')}
-            >
+            <Text style={styles.link} onPress={() => router.push('/register')}>
               Regístrate
             </Text>
           </View>

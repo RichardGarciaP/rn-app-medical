@@ -7,11 +7,13 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import { useAuth } from '../context/AuthContext';
 import { Button, Input, ErrorMessage } from '../components';
 
-export const RegisterScreen = ({ navigation }: any) => {
+export const RegisterScreen = () => {
+  const router = useRouter();
   const { signUp } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -42,6 +44,7 @@ export const RegisterScreen = ({ navigation }: any) => {
     setLoading(true);
     try {
       await signUp({ name, email, password, role });
+      router.replace('/');
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -122,10 +125,7 @@ export const RegisterScreen = ({ navigation }: any) => {
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>¿Ya tienes cuenta? </Text>
-            <Text
-              style={styles.link}
-              onPress={() => navigation.navigate('Login')}
-            >
+            <Text style={styles.link} onPress={() => router.push('/login')}>
               Inicia Sesión
             </Text>
           </View>

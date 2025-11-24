@@ -7,12 +7,14 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
 import { appointmentService } from '../services/appointmentService';
 import { Appointment } from '../types';
 import { Card, Button, Loading, ErrorMessage } from '../components';
 
-export const PatientHomeScreen = ({ navigation }: any) => {
+export const PatientHomeScreen = () => {
+  const router = useRouter();
   const { user, signOut } = useAuth();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,13 +40,11 @@ export const PatientHomeScreen = ({ navigation }: any) => {
     loadAppointments();
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
+  useFocusEffect(
+    useCallback(() => {
       loadAppointments();
-    });
-
-    return unsubscribe;
-  }, [navigation]);
+    }, [])
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -147,7 +147,7 @@ export const PatientHomeScreen = ({ navigation }: any) => {
       <View style={styles.actions}>
         <Button
           title='➕ Nueva Cita'
-          onPress={() => navigation.navigate('NewAppointment')}
+          onPress={() => router.push('/patient/new-appointment')}
         />
       </View>
 

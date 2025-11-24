@@ -8,6 +8,7 @@ import {
   Platform,
   ToastAndroid,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useAuth } from '../context/AuthContext';
@@ -15,7 +16,8 @@ import { appointmentService } from '../services/appointmentService';
 import { User } from '../types';
 import { Button, Card, ErrorMessage, Loading } from '../components';
 
-export const NewAppointmentScreen = ({ navigation }: any) => {
+export const NewAppointmentScreen = () => {
+  const router = useRouter();
   const { user } = useAuth();
   const [doctors, setDoctors] = useState<User[]>([]);
   const [selectedDoctor, setSelectedDoctor] = useState<number | null>(null);
@@ -150,7 +152,7 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
         ToastAndroid.show('✅ Cita agendada correctamente', ToastAndroid.LONG);
       }
 
-      navigation.navigate('Home', { refresh: true });
+      router.replace('/patient/home');
     } catch (err: any) {
       const errorMessage =
         err.response?.data?.message ||

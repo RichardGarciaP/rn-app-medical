@@ -53,7 +53,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       setUser(userData);
       await AsyncStorage.setItem('user', JSON.stringify(userData));
-      await AsyncStorage.setItem('token', response.token);
+      if (response.token) {
+        await AsyncStorage.setItem('token', response.token);
+      }
     } catch (error: any) {
       let errorMessage = 'Error al iniciar sesión';
 
