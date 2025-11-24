@@ -39,7 +39,6 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
       }
     } catch (err) {
       setError('Error al cargar doctores. Usando datos de ejemplo.');
-      // Datos mock para testing
       const mockDoctors = [
         {
           id: 1,
@@ -83,7 +82,6 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
   };
 
   const validateAppointment = (): { isValid: boolean; message?: string } => {
-    // Validar doctor seleccionado
     if (!selectedDoctor || !user) {
       return { isValid: false, message: 'Por favor selecciona un doctor' };
     }
@@ -91,7 +89,6 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
     const now = new Date();
     const appointmentDate = new Date(date);
 
-    // Validar que la fecha sea futura (al menos 1 hora)
     const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
     if (appointmentDate < oneHourFromNow) {
       return {
@@ -100,7 +97,6 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
       };
     }
 
-    // Validar horario laboral (8 AM - 6 PM)
     const hours = appointmentDate.getHours();
     if (hours < 8 || hours >= 18) {
       return {
@@ -109,7 +105,6 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
       };
     }
 
-    // Validar que no sea fin de semana
     const dayOfWeek = appointmentDate.getDay();
     if (dayOfWeek === 0 || dayOfWeek === 6) {
       return {
@@ -118,7 +113,6 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
       };
     }
 
-    // Validar que no sea muy lejos en el futuro (máximo 3 meses)
     const threeMonthsFromNow = new Date(
       now.getTime() + 90 * 24 * 60 * 60 * 1000
     );
@@ -134,7 +128,6 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
   };
 
   const handleSubmit = async () => {
-    // Validar la cita
     const validation = validateAppointment();
     if (!validation.isValid) {
       Alert.alert('Validación', validation.message || 'Datos inválidos');
@@ -145,7 +138,6 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
     setError('');
 
     try {
-      // Formato ISO 8601 sin timezone
       const dateTimeISO = date.toISOString().slice(0, -1);
 
       await appointmentService.createAppointment({
@@ -154,12 +146,10 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
         dateTime: dateTimeISO,
       });
 
-      // Mostrar toast
       if (Platform.OS === 'android') {
         ToastAndroid.show('✅ Cita agendada correctamente', ToastAndroid.LONG);
       }
 
-      // Navegar y actualizar la lista
       navigation.navigate('PatientHome', { refresh: true });
     } catch (err: any) {
       const errorMessage =

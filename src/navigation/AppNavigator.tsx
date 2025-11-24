@@ -4,15 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../context/AuthContext';
 import { Loading } from '../components';
 
-// Auth Screens
 import { LoginScreen } from '../screens/LoginScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
-
-// Patient Screens
 import { PatientHomeScreen } from '../screens/PatientHomeScreen';
 import { NewAppointmentScreen } from '../screens/NewAppointmentScreen';
-
-// Doctor Screens
 import { DoctorHomeScreen } from '../screens/DoctorHomeScreen';
 
 const Stack = createNativeStackNavigator();

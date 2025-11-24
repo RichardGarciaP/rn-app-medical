@@ -17,8 +17,6 @@ export const DoctorHomeScreen = () => {
 
     try {
       setError('');
-      // El doctor ve sus citas como si fuera un "paciente" en la misma consulta
-      // En producción, se debería tener un endpoint específico para doctores
       const data = await appointmentService.getPatientAppointments(user.id);
       setAppointments(data);
     } catch (err: any) {

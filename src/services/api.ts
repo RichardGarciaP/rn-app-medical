@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// Interceptor para agregar el token JWT a todas las peticiones
 api.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem('token');
@@ -23,15 +22,12 @@ api.interceptors.request.use(
   }
 );
 
-// Interceptor para manejar errores de autenticación
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      // Token expirado o inválido
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('user');
-      // Aquí podrías redirigir al login
     }
     return Promise.reject(error);
   }
