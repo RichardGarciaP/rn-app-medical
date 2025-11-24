@@ -38,40 +38,9 @@ export const appointmentService = {
     await api.patch(`/appointments/${appointmentId}/cancel`);
   },
 
-  // Obtener todos los doctores (necesario para crear citas)
+  // Obtener todos los doctores
   getAllDoctors: async (): Promise<User[]> => {
-    try {
-      const response = await api.get<User[]>('/user/doctors');
-      console.log('Doctores cargados desde API:', response.data.length);
-      return response.data;
-    } catch (error: any) {
-      console.warn('Endpoint /user/doctors no disponible, usando datos mock');
-      console.warn('Error:', error.response?.status || error.message);
-
-      // Mock data para desarrollo/testing
-      // TODO: Implementar endpoint en backend
-      const mockDoctors: User[] = [
-        {
-          id: 1,
-          name: 'Dr. Juan García',
-          email: 'doctor1@test.com',
-          role: 'DOCTOR',
-        },
-        {
-          id: 2,
-          name: 'Dra. María López',
-          email: 'doctor2@test.com',
-          role: 'DOCTOR',
-        },
-        {
-          id: 3,
-          name: 'Dr. Carlos Ruiz',
-          email: 'doctor3@test.com',
-          role: 'DOCTOR',
-        },
-      ];
-
-      return mockDoctors;
-    }
+    const response = await api.get<User[]>('/user/doctors');
+    return response.data;
   },
 };
