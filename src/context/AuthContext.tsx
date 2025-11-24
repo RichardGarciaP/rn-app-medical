@@ -55,13 +55,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await AsyncStorage.setItem('user', JSON.stringify(userData));
       await AsyncStorage.setItem('token', response.token);
     } catch (error: any) {
-      console.error('Error completo:', error);
-      console.error('Error response:', error.response);
-      
       let errorMessage = 'Error al iniciar sesión';
-      
+
       if (error.code === 'ERR_NETWORK' || error.message.includes('Network')) {
-        errorMessage = 'No se puede conectar al servidor. Verifica que el backend esté corriendo en http://192.168.1.3:8080';
+        errorMessage =
+          'No se puede conectar al servidor. Verifica que el backend esté corriendo en http://192.168.1.3:8080';
       } else if (error.response?.status === 401) {
         errorMessage = 'Email o contraseña incorrectos';
       } else if (error.response?.status === 404) {
@@ -69,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       }
-      
+
       throw new Error(errorMessage);
     }
   }
@@ -77,7 +75,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   async function signUp(data: RegisterRequest) {
     try {
       await authService.register(data);
-      // Después del registro, hacer login automático
       await signIn({ email: data.email, password: data.password });
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Error al registrarse');

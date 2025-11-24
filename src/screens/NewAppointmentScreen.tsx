@@ -6,6 +6,7 @@ import {
   ScrollView,
   Alert,
   Platform,
+  ToastAndroid,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -153,12 +154,13 @@ export const NewAppointmentScreen = ({ navigation }: any) => {
         dateTime: dateTimeISO,
       });
 
-      Alert.alert('Éxito', 'Cita agendada correctamente', [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(),
-        },
-      ]);
+      // Mostrar toast
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('✅ Cita agendada correctamente', ToastAndroid.LONG);
+      }
+
+      // Navegar y actualizar la lista
+      navigation.navigate('PatientHome', { refresh: true });
     } catch (err: any) {
       const errorMessage =
         err.response?.data?.message ||

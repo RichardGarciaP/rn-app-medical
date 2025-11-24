@@ -38,6 +38,14 @@ export const PatientHomeScreen = ({ navigation }: any) => {
     loadAppointments();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadAppointments();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     loadAppointments();
