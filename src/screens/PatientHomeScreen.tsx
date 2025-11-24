@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,49 +7,23 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
-import { appointmentService } from '../services/appointmentService';
 import { Appointment } from '../types';
 import { Card, Button, Loading, ErrorMessage } from '../components';
+import { useAppointments } from '../hooks/useAppointments';
 
 export const PatientHomeScreen = () => {
   const router = useRouter();
   const { user, signOut } = useAuth();
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState('');
-
-  const loadAppointments = async () => {
-    if (!user) return;
-
-    try {
-      setError('');
-      const data = await appointmentService.getPatientAppointments(user.id);
-      setAppointments(data);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al cargar las citas');
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  useEffect(() => {
-    loadAppointments();
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      loadAppointments();
-    }, [])
-  );
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    loadAppointments();
-  }, []);
+  const {
+    appointments,
+    loading,
+    refreshing,
+    error,
+    refreshAppointments,
+    cancelAppointment,
+  } = useAppointments(user?.id || 0, 'patient');
 
   const handleCancelAppointment = (appointmentId: number) => {
     Alert.alert(
@@ -61,15 +35,11 @@ export const PatientHomeScreen = () => {
           text: 'Sí, Cancelar',
           style: 'destructive',
           onPress: async () => {
-            try {
-              await appointmentService.cancelAppointment(appointmentId);
+            const result = await cancelAppointment(appointmentId);
+            if (result.success) {
               Alert.alert('Éxito', 'Cita cancelada correctamente');
-              loadAppointments();
-            } catch (err: any) {
-              Alert.alert(
-                'Error',
-                err.response?.data?.message || 'Error al cancelar la cita'
-              );
+            } else {
+              Alert.alert('Error', result.error || 'Error al cancelar la cita');
             }
           },
         },
@@ -158,7 +128,10 @@ export const PatientHomeScreen = () => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderAppointment}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={refreshAppointments}
+          />
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>

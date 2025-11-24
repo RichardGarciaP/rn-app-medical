@@ -33,7 +33,8 @@
 #### Gestión de Estado
 
 - **React Context API** - Estado global para autenticación
-- **Custom Hooks** - Lógica de negocio reutilizable
+- **SWR** `^2.3.0` - Data fetching con caché, revalidación automática y optimistic updates
+- **Custom Hooks** - Lógica de negocio reutilizable con SWR
 
 #### Comunicación con API
 
@@ -77,6 +78,9 @@ medical-app-mobile/
 │   │   ├── Input.tsx
 │   │   ├── Loading.tsx
 │   │   └── index.ts
+│   │
+│   ├── config/                  # Configuraciones
+│   │   └── swrConfig.ts        # Configuración global de SWR
 │   │
 │   ├── constants/               # Constantes y configuración
 │   │   ├── theme.ts            # Colores, espaciados, fuentes, sombras
@@ -153,7 +157,19 @@ El proyecto usa Expo Router como punto de entrada, eliminando la necesidad de co
 
 ## 🎨 Patrones de Diseño Implementados
 
-### 1. Custom Hooks Pattern
+### 1. SWR Pattern (Stale-While-Revalidate)
+
+Data fetching con estrategia de caché optimizada:
+
+- **Caché automático** - Respuestas en memoria para acceso instantáneo
+- **Revalidación en background** - Actualización automática sin bloquear UI
+- **Deduplicación** - Múltiples peticiones idénticas se agrupan
+- **Optimistic updates** - UI actualizada antes de confirmación del servidor
+- **Focus revalidation** - Datos frescos al volver a la app
+- **Interval polling** - Actualización periódica cada 30 segundos
+- **Error retry** - Reintentos automáticos con backoff exponencial
+
+### 2. Custom Hooks Pattern
 
 Lógica de negocio encapsulada en hooks reutilizables:
 
@@ -322,8 +338,10 @@ Usuario → NewAppointmentScreen → useForm (validación)
 ## 🎯 Mejores Prácticas Aplicadas
 
 ✅ **TypeScript First** - Type safety en toda la aplicación
+✅ **SWR Data Fetching** - Caché automático y revalidación optimizada
 ✅ **Component Composition** - Componentes pequeños y reutilizables
 ✅ **Custom Hooks** - Lógica separada de UI
+✅ **Optimistic Updates** - UI responsiva antes de confirmación del servidor
 ✅ **Error Boundaries** - Manejo robusto de errores
 ✅ **Code Splitting** - Navegación lazy-loaded
 ✅ **Consistent Naming** - Convenciones claras
@@ -331,6 +349,7 @@ Usuario → NewAppointmentScreen → useForm (validación)
 ✅ **Constants Centralization** - Valores inmutables
 ✅ **Responsive Design** - Adaptable a diferentes pantallas
 ✅ **Accessibility Ready** - Preparado para mejoras de accesibilidad
+✅ **No useEffect para fetching** - SWR maneja automáticamente el ciclo de vida
 
 ## 🔮 Roadmap de Mejoras Sugeridas
 

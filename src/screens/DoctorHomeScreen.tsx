@@ -1,40 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl } from 'react-native';
 import { useAuth } from '../context/AuthContext';
-import { appointmentService } from '../services/appointmentService';
 import { Appointment } from '../types';
 import { Card, Button, Loading, ErrorMessage } from '../components';
+import { useAppointments } from '../hooks/useAppointments';
 
 export const DoctorHomeScreen = () => {
   const { user, signOut } = useAuth();
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState('');
-
-  const loadAppointments = async () => {
-    if (!user) return;
-
-    try {
-      setError('');
-      const data = await appointmentService.getPatientAppointments(user.id);
-      setAppointments(data);
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al cargar las citas');
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  useEffect(() => {
-    loadAppointments();
-  }, []);
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    loadAppointments();
-  }, []);
+  const { appointments, loading, refreshing, error, refreshAppointments } =
+    useAppointments(user?.id || 0, 'doctor');
 
   const renderAppointment = ({ item }: { item: Appointment }) => {
     const date = new Date(item.dateTime);
@@ -116,7 +90,10 @@ export const DoctorHomeScreen = () => {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderAppointment}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={refreshAppointments}
+          />
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>

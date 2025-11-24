@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -13,54 +13,21 @@ import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useAuth } from '../context/AuthContext';
 import { appointmentService } from '../services/appointmentService';
-import { User } from '../types';
 import { Button, Card, ErrorMessage, Loading } from '../components';
+import { useDoctors } from '../hooks/useDoctors';
 
 export const NewAppointmentScreen = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const [doctors, setDoctors] = useState<User[]>([]);
-  const [selectedDoctor, setSelectedDoctor] = useState<number | null>(null);
+  const { doctors, loading, error: doctorsError } = useDoctors();
+  const [selectedDoctor, setSelectedDoctor] = useState<number | null>(
+    doctors.length > 0 ? doctors[0].id : null
+  );
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    loadDoctors();
-  }, []);
-
-  const loadDoctors = async () => {
-    try {
-      const data = await appointmentService.getAllDoctors();
-      setDoctors(data);
-      if (data.length > 0) {
-        setSelectedDoctor(data[0].id);
-      }
-    } catch (err) {
-      setError('Error al cargar doctores. Usando datos de ejemplo.');
-      const mockDoctors = [
-        {
-          id: 1,
-          name: 'Dr. Juan García',
-          email: 'doctor1@test.com',
-          role: 'DOCTOR' as const,
-        },
-        {
-          id: 2,
-          name: 'Dra. María López',
-          email: 'doctor2@test.com',
-          role: 'DOCTOR' as const,
-        },
-      ];
-      setDoctors(mockDoctors);
-      setSelectedDoctor(mockDoctors[0].id);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(false);
@@ -174,7 +141,9 @@ export const NewAppointmentScreen = () => {
       <View style={styles.content}>
         <Text style={styles.title}>Nueva Cita Médica</Text>
 
-        {error ? <ErrorMessage message={error} /> : null}
+        {error || doctorsError ? (
+          <ErrorMessage message={error || doctorsError} />
+        ) : null}
 
         <Card>
           <Text style={styles.label}>Selecciona un Doctor</Text>
