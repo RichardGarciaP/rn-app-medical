@@ -25,6 +25,11 @@ export const PatientHomeScreen = () => {
     cancelAppointment,
   } = useAppointments(user?.id || 0, 'patient');
 
+  const handleSignOut = async () => {
+    await signOut();
+    router.replace('/login');
+  };
+
   const handleCancelAppointment = (appointmentId: number) => {
     Alert.alert(
       'Cancelar Cita',
@@ -109,7 +114,7 @@ export const PatientHomeScreen = () => {
           <Text style={styles.greeting}>Hola, {user?.name}! 👋</Text>
           <Text style={styles.role}>Paciente</Text>
         </View>
-        <Button title='Salir' variant='secondary' onPress={signOut} />
+        <Button title='Salir' variant='secondary' onPress={handleSignOut} />
       </View>
 
       {error ? <ErrorMessage message={error} /> : null}

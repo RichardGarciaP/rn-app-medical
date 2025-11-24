@@ -1,14 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../context/AuthContext';
 import { Appointment } from '../types';
 import { Card, Button, Loading, ErrorMessage } from '../components';
 import { useAppointments } from '../hooks/useAppointments';
 
 export const DoctorHomeScreen = () => {
+  const router = useRouter();
   const { user, signOut } = useAuth();
   const { appointments, loading, refreshing, error, refreshAppointments } =
     useAppointments(user?.id || 0, 'doctor');
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.replace('/login');
+  };
 
   const renderAppointment = ({ item }: { item: Appointment }) => {
     const date = new Date(item.dateTime);
@@ -63,7 +70,7 @@ export const DoctorHomeScreen = () => {
           <Text style={styles.greeting}>Hola, {user?.name}! 👨‍⚕️</Text>
           <Text style={styles.role}>Doctor</Text>
         </View>
-        <Button title='Salir' variant='secondary' onPress={signOut} />
+        <Button title='Salir' variant='secondary' onPress={handleSignOut} />
       </View>
 
       {error ? <ErrorMessage message={error} /> : null}
